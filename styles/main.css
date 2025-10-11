@@ -4,7 +4,7 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
-    background-color: #f4f4f4; 
+    background-color: #b7b7b7; 
 }
 
 /* --- Global Styles & Reset --- */
@@ -160,7 +160,7 @@ ul {
 /* --- Hero Section Styling --- */
 .hero-section {
     /* 1. Set a full-width background image/color */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('path/to/your/image.jpg'); /* Use a placeholder image path! */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../sareeAD.jpeg'); /* Use a placeholder image path! */
     background-size: cover;
     background-position: center;
     min-height: 500px; /* Set a minimum height */
