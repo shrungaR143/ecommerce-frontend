@@ -4,4 +4,265 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
+    background-color: #f4f4f4; 
+}
+
+/* --- Global Styles & Reset --- */
+/* (Always start with a simple reset for consistent styling) */
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- Subtask 2: Style the Header & Navigation Bar --- */
+.main-header {
+    background-color: #333; /* Dark background for a clean look */
+    color: white;
+    padding: 10px 20px;
+    
+    /* Use Flexbox to align logo, navigation, and utilities horizontally (Step 2) */
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.logo {
+    flex-grow: 0;
+}
+
+.logo h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+/* --- Desktop Navigation Links (Step 2) --- */
+.desktop-nav ul {
+    display: flex; /* Links displayed in a horizontal row */
+    gap: 20px; 
+}
+
+.desktop-nav a {
+    padding: 5px 10px;
+    transition: color 0.3s;
+}
+
+.desktop-nav a:hover {
+    color: #ffd700; /* Modern hover effect */
+}
+
+/* --- Utility Elements (Search, Cart, Hamburger) (Step 2) --- */
+.utilities {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Search Bar Styling */
+.search-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Proper size and border-radius */
+    width: 150px;
+}
+
+/* Cart Icon and Badge Positioning */
+.cart-icon {
+    position: relative;
+    font-size: 1.5em; 
+    cursor: pointer;
+}
+
+/* Notification Badge Styling */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    font-size: 0.7em;
+    border-radius: 50%;
+    padding: 2px 5px;
+    line-height: 1; 
+    display: block; 
+}
+
+/* Hamburger Menu: Hidden on Desktop (Start of Mobile Prep) */
+.hamburger-menu {
+    display: none; /* Hide on large screens */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 0;
+}
+
+
+/* --- Subtask 3: Make the Navigation Responsive (CSS for Mobile) --- */
+@media (max-width: 768px) {
+    
+    /* Hide search and desktop navigation elements */
+    .search-form {
+        display: none;
+    }
+    
+    .desktop-nav {
+        /* Hides the entire menu initially on mobile */
+        display: none; 
+        
+        /* Positioning for when the 'active' class is added by JavaScript */
+        position: absolute; 
+        top: 50px; /* Position below the header */
+        left: 0;
+        width: 100%;
+        background-color: #444; 
+        z-index: 10;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        
+        /* Transition for smooth open/close (Subtask 5 - Optimize) */
+        transition: transform 0.3s ease-in-out;
+        transform: translateY(-100%); /* Start off-screen */
+    }
+
+    /* Show the hamburger menu icon */
+    .hamburger-menu {
+        display: block; 
+    }
+
+    /* Styles for the navigation when the menu is active (shown) */
+    .desktop-nav.active {
+        display: block; 
+        transform: translateY(0); /* Slide into view */
+    }
+
+    .desktop-nav.active ul {
+        flex-direction: column; /* Stack links vertically */
+        padding: 10px 0;
+    }
+
+    .desktop-nav.active li {
+        text-align: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #555;
+    }
+    .desktop-nav.active li:last-child {
+        border-bottom: none;
+    }
+}
+
+/* --- Hero Section Styling --- */
+.hero-section {
+    /* 1. Set a full-width background image/color */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('path/to/your/image.jpg'); /* Use a placeholder image path! */
+    background-size: cover;
+    background-position: center;
+    min-height: 500px; /* Set a minimum height */
+    color: white; /* Ensure text is readable over a dark background */
+    text-align: center; 
+    
+    /* 2. Use flexbox to center content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 3. Apply padding and margins */
+    padding: 20px; 
+}
+
+.hero-content {
+    /* Limit the width of the text content */
+    max-width: 800px; 
+}
+
+.hero-content h1 {
+    font-size: 4em; /* Use large, bold fonts */
+    margin-bottom: 0.5em;
+    font-weight: 800;
+}
+
+.hero-content .subheading {
+    font-size: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+/* --- CTA Button Styling --- */
+.cta-button {
+    display: inline-block;
+    background-color: #ffd700; /* Gold/Yellow for high contrast */
+    color: #333;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+/* Hover effect: make it slightly larger and change background color */
+.cta-button:hover {
+    background-color: #e6c500; /* Slightly darker gold */
+    transform: translateY(-2px); /* Lifts the button slightly */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+}
+
+/* --- Hero Section Responsiveness (Subtask 2, Step 4) --- */
+@media (max-width: 600px) {
+    
+    .hero-section {
+        min-height: 400px;
+    }
+    
+    /* Adjust font size for mobile screens */
+    .hero-content h1 {
+        font-size: 2.5em; 
+    }
+    
+    .hero-content .subheading {
+        font-size: 1.2em;
+        margin-bottom: 2em;
+    }
+
+    /* Ensure CTA button is easy to tap */
+    .cta-button {
+        padding: 12px 24px;
+        font-size: 0.9em;
+    }
+}
+
+/* Define the fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation to the main heading */
+.hero-content h1 {
+    /* ... existing styles ... */
+    animation: fadeIn 1s ease-out forwards;
+}
+
+/* Apply animation to the subheading, starting slightly later */
+.hero-content .subheading {
+    /* ... existing styles ... */
+    animation: fadeIn 1s ease-out 0.5s forwards;
+}
+
+/* Apply animation to the CTA button, starting even later */
+.cta-button {
+    /* ... existing styles ... */
+    animation: fadeIn 1s ease-out 1s forwards;
+    opacity: 0; /* Important: Start with opacity 0 so it's initially hidden */
+    transform: translateY(20px); /* Important: Start slightly offset */
 }

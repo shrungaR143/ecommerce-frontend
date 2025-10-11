@@ -5,11 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Commerce Frontend</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> 
 </head>
 <body>
-    <header>
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Biggest Sale of the Year!</h1>
+                <p class="subheading">Exclusive deals on all new arrivals. Shop smart, live better.</p>
+                <a href="products.html" class="cta-button">Shop Now</a>
+            </div>
+        </section>    
+    </main>
+
+    <header class="main-header">
+        <div class="logo">
+            <h1>E-Shop</h1>
+        </div>
+        
+        <nav class="desktop-nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Produtcs</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+
         <h1>Welcome to Our Online Store</h1>
+
+        <div class="utilities">
+            <form class="search-form">
+                <input type="search" placeholder="Search products...">
+            </form>
+            
+            <div class="cart-icon">
+                <i class="fa fa-shopping-cart"></i> <span class="notification-badge">0</span>
+            </div>
+            
+            <button class="hamburger-menu">
+                &#9776
+            </button>
+        </div>
+        
     </header>
+
     <script src="scripts/app.js"></script>
 </body>
 </html> 
