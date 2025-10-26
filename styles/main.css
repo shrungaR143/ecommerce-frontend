@@ -1,10 +1,14 @@
- 
+* {
+    box-sizing: border-box; /* Ensures padding/border don't add to the element's total width */
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     text-align: center;
     background-color: #b7b7b7; 
+    overflow-x: hidden;
 }
 
 /* --- Global Styles & Reset --- */
@@ -90,7 +94,7 @@ ul {
     border-radius: 50%;
     padding: 2px 5px;
     line-height: 1; 
-    display: block; 
+    display: none; 
 }
 
 /* Hamburger Menu: Hidden on Desktop (Start of Mobile Prep) */
@@ -160,7 +164,7 @@ ul {
 /* --- Hero Section Styling --- */
 .hero-section {
     /* 1. Set a full-width background image/color */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../sareeAD.jpeg'); /* Use a placeholder image path! */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/images/sareeAD.jpeg'); /* Use a placeholder image path! */
     background-size: cover;
     background-position: center;
     min-height: 500px; /* Set a minimum height */
@@ -181,15 +185,18 @@ ul {
     max-width: 800px; 
 }
 
+
 .hero-content h1 {
     font-size: 4em; /* Use large, bold fonts */
     margin-bottom: 0.5em;
     font-weight: 800;
+    animation: fadeIn 1s ease-out forwards;
 }
 
 .hero-content .subheading {
     font-size: 1.5em;
     margin-bottom: 1.5em;
+    animation: fadeIn 1s ease-out 0.5s forwards;
 }
 
 /* --- CTA Button Styling --- */
@@ -202,7 +209,11 @@ ul {
     font-weight: bold;
     text-transform: uppercase;
     transition: background-color 0.3s;
+    animation: fadeIn 1s ease-out 1s forwards;
+    opacity: 0; /* Important: Start with opacity 0 so it's initially hidden */
+    transform: translateY(20px); /* Important: Start slightly offset */
 }
+
 
 /* Hover effect: make it slightly larger and change background color */
 .cta-button:hover {
@@ -247,22 +258,131 @@ ul {
     }
 }
 
-/* Apply animation to the main heading */
-.hero-content h1 {
-    /* ... existing styles ... */
-    animation: fadeIn 1s ease-out forwards;
+
+/* --- Products Section General Styles --- */
+.products-container {
+    padding: 40px 20px;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    text-align: center;
+    width: 100%; 
 }
 
-/* Apply animation to the subheading, starting slightly later */
-.hero-content .subheading {
-    /* ... existing styles ... */
-    animation: fadeIn 1s ease-out 0.5s forwards;
+.products-container {
+    /* padding: 40px 20px;
+    max-width: 1200px; */
+    margin: 0 auto; 
+    /* Add this safety line if overflow persists */
+    width: 100%; 
 }
 
-/* Apply animation to the CTA button, starting even later */
-.cta-button {
-    /* ... existing styles ... */
-    animation: fadeIn 1s ease-out 1s forwards;
-    opacity: 0; /* Important: Start with opacity 0 so it's initially hidden */
-    transform: translateY(20px); /* Important: Start slightly offset */
+.section-title {
+    font-size: 2em;
+    margin-bottom: 30px;
+    color: #333;
 }
+
+
+/* --- Product Grid Layout (Desktop - 4 Columns) --- */
+.product-grid {
+    display: grid;
+    /* Define 4 columns of equal size on large screens */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; 
+}
+
+/* --- Product Card Styling --- */
+.product-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ensure smooth transition */
+    display: flex; /* Use Flexbox for vertical alignment inside the card */
+    flex-direction: column; 
+    height: 100%; /* Ensures all cards in the row take the same height */
+}
+
+
+.product-card:hover {
+    transform: translateY(-5px); /* Lifts card slightly */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.product-image-wrapper {
+    height: 200px;
+    background-color: #f0f0f0;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+
+.product-image {
+    max-width: 100%;  /* CRITICAL: Ensures the image never exceeds its parent width */
+    max-height: 100%;
+    object-fit: contain; 
+}
+
+.product-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+    /* Optional: Truncate title if it's too long */
+    /*white-space: nowrap;*/
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.product-price {
+    font-size: 1.3em;
+    color: #e94e77; 
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+
+/* --- CTA Button Styling --- */
+.add-to-cart-btn {
+    background-color: #ffd700; 
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 100%;
+    transition: background-color 0.2s; /* Ensure smooth transition */
+    margin-top: auto; 
+}
+
+.add-to-cart-btn:hover {
+    background-color: #e6c500;
+}
+
+
+/* --- 4. Responsiveness (Media Queries) --- */
+
+/* Tablet View (2 Columns) */
+@media (max-width: 992px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+/* Mobile View (1 Column) */
+@media (max-width: 576px) {
+    .product-grid {
+        grid-template-columns: 1fr; 
+    }
+    .products-container {
+        padding: 20px 10px;
+    }
+}
+
+
+
