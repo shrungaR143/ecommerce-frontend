@@ -67,6 +67,7 @@ hamburgerBtn.addEventListener('click', () => {
 
 // --- HELPER FUNCTION TO RENDER PRODUCTS ---
 // This function takes the product data and injects it into the HTML
+// --- HELPER FUNCTION TO RENDER PRODUCTS ---
 function renderProducts(products) {
     productGrid.innerHTML = ''; // Clear loading message
 
@@ -74,7 +75,7 @@ function renderProducts(products) {
         const formattedPrice = product.price.toFixed(2);
         
         const productCardHTML = `
-            <div class="product-card">
+            <a href="product.html?id=${product.id}" class="product-card">
                 <div class="product-image-wrapper">
                     <img 
                         src="${product.image}" 
@@ -91,13 +92,14 @@ function renderProducts(products) {
                 <button class="add-to-cart-btn" data-product-id="${product.id}">
                     Add to Cart
                 </button>
-            </div>
-        `;
+            </a>
+            `;
+        // --- MODIFICATION ENDS HERE ---
         
         productGrid.insertAdjacentHTML('beforeend', productCardHTML);
     });
+    
 }
-
 
 // --- FUNCTION TO FETCH PRODUCTS (WITH CACHING LOGIC) ---
 async function fetchProducts() {

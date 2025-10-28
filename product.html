@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail | E-Shop</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> 
+</head>
+<body>
+    
+    <header class="main-header">
+        <div class="logo">
+            <h1>E-Shop</h1>
+        </div>
+        
+        <nav class="desktop-nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="utilities">
+            <form class="search-form">
+                <input type="search" placeholder="Search products...">
+            </form>
+            
+            <div class="cart-icon">
+                <i class="fa fa-shopping-cart"></i> 
+                <span class="notification-badge">0</span>
+            </div>
+            
+            <button class="hamburger-menu">
+                &#9776
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="product-detail-container">
+            <div id="product-details">
+                <p style="text-align: center; font-size: 1.5em; padding: 50px;">Loading product information...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 E-Shop. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script src="scripts/app.js"></script>
+    
+    <script src="scripts/product-detail.js"></script>
+</body>
+</html>

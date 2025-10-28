@@ -283,6 +283,7 @@ ul {
 }
 
 
+
 /* --- Product Grid Layout (Desktop - 4 Columns) --- */
 .product-grid {
     display: grid;
@@ -292,38 +293,64 @@ ul {
 }
 
 /* --- Product Card Styling --- */
+.product-card-link-wrapper {
+    /* Ensures the link wrapper behaves like the old product-card div */
+    text-decoration: none; /* remove underline from link */
+    color: inherit;
+    display: flex; /* <--- ADD THIS */
+    flex-direction: column; /* <--- ADD THIS */
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.product-card-link-wrapper:hover {
+    transform: translateY(-5px); /* Lifts card slightly */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
 .product-card {
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ensure smooth transition */
     display: flex; /* Use Flexbox for vertical alignment inside the card */
     flex-direction: column; 
     height: 100%; /* Ensures all cards in the row take the same height */
+    /* Remove hover styles from here since they moved to .product-card-link-wrapper */
 }
 
-
-.product-card:hover {
-    transform: translateY(-5px); /* Lifts card slightly */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
-}
 
 .product-image-wrapper {
     height: 200px;
-    background-color: #f0f0f0;  
+    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
+    /* --- HOMEPAGE IMAGE ZOOM SETUP --- */
+    overflow: hidden; /* CRITICAL: Hides the part of the image that scales out of the container */
 }
 
 
 .product-image {
-    max-width: 100%;  /* CRITICAL: Ensures the image never exceeds its parent width */
+    max-width: 100%; /* CRITICAL: Ensures the image never exceeds its parent width */
     max-height: 100%;
     object-fit: contain; 
+    /* --- HOMEPAGE IMAGE ZOOM SETUP --- */
+    transition: transform 0.4s ease-in-out;
+}
+
+/* STRONGER HOVER RULE FOR HOMEPAGE IMAGE */
+.product-card-link-wrapper:hover > .product-card .product-image {
+    /* Subtle scale up (1.05) to make the image pop inside the card */
+    transform: scale(1.05); 
+}
+
+/* STRONGEST HOVER RULE FOR HOMEPAGE IMAGE - THIS MUST WORK */
+.products-container .product-grid .product-card-link-wrapper:hover .product-card .product-image {
+    /* Subtle scale up (1.05) to make the image pop inside the card */
+    transform: scale(1.05) !important; 
 }
 
 .product-title {
@@ -384,5 +411,413 @@ ul {
     }
 }
 
+/* --- Media Query to disable homepage zoom on mobile/tablet --- */
+@media (max-width: 768px) {
+    .product-card-link-wrapper:hover .product-image {
+        transform: scale(1); /* Disable scale up on mobile */
+    }
+}
 
 
+/* =======================================
+   4. PRODUCT DETAIL PAGE LAYOUT 
+   ======================================= */
+
+.product-detail-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Flex layout for image and info columns */
+.detail-wrapper {
+    display: flex;
+    flex-direction: row; /* Default to horizontal layout */
+    gap: 40px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Image Column Styling */
+.detail-image-column {
+    flex: 1; /* Takes up 50% of the space on desktop */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* --- DETAIL ZOOM SETUP --- */
+    overflow: hidden; /* CRITICAL: Hides the part of the image that scales out of the container */
+    border-radius: 6px; /* Match the border radius of the image itself */
+}
+
+.detail-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px; /* Padding inside the image box */
+    /* --- DETAIL ZOOM SETUP --- */
+    transition: transform 0.4s ease-in-out;
+}
+
+/* 1. Zoom effect applied on hover (Detail Page) */
+.detail-image-column:hover .detail-image {
+    transform: scale(1.2); /* Magnify the image by 20% */
+}
+
+
+/* Info Column Styling */
+.detail-info-column {
+    flex: 1; /* Takes up the other 50% of the space on desktop */
+    text-align: left; /* Ensure text aligns left in the info column */
+}
+
+.detail-title {
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ffd700; /* Gold separator */
+    padding-bottom: 10px;
+}
+
+.detail-category {
+    font-size: 1em;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.detail-description {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.detail-price-rating {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-price {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #cc0000; /* Strong price color */
+    margin-bottom: 10px;
+}
+
+.detail-rating {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Adjusting the Add to Cart button for the detail page */
+.add-to-cart-detail {
+    /* Reuse existing .cta-button style which is more appropriate for detail page */
+    display: inline-block;
+    background-color: #ffd700; 
+    color: #333;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+    border: none;
+    cursor: pointer;
+    width: auto; /* Allow button to size based on content */
+    margin: 0;
+}
+.add-to-cart-detail:hover {
+    background-color: #e6c500;
+}
+
+/* Responsive adjustment for tablets and mobile */
+@media (max-width: 900px) {
+    .detail-wrapper {
+        flex-direction: column; /* Stacks columns vertically */
+    }
+    .detail-image-column {
+        padding-bottom: 20px;
+        align-items: center;
+    }
+    .detail-image {
+        max-height: 400px;
+    }
+    .detail-info-column {
+        text-align: center; /* Center align all content in the info column */
+    }
+    
+    /* Re-align specific elements for better mobile readability */
+    .detail-title, .detail-description {
+        text-align: center; 
+    }
+    .detail-price-rating {
+        align-items: center; /* Center price/rating stack */
+        margin: 20px auto;
+    }
+    .add-to-cart-detail {
+        width: 100%; /* Full width button on mobile */
+        max-width: 300px;
+    }
+    
+    /* 2. Disable detail page zoom on smaller screens (Mobile/Tablet) */
+    .detail-image-column:hover .detail-image {
+        transform: scale(1); /* Disable zoom effect */
+        cursor: default;
+    }
+}
+
+@media (max-width: 600px) {
+    .detail-title {
+        font-size: 1.8em;
+    }
+    .detail-price {
+        font-size: 2em;
+    }
+    .detail-wrapper {
+        padding: 15px;
+    }
+}
+
+
+/* --- NEW Styles for Product Variations (Task 2) --- */
+
+.product-variations {
+    margin: 20px 0 30px;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.variation-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.variation-group label {
+    font-weight: bold;
+    color: #333;
+    min-width: 50px; /* Aligns the labels */
+}
+
+.variation-option {
+    padding: 8px 15px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s;
+    font-size: 0.95em;
+    font-weight: 600;
+}
+
+/* Hover/Focus State */
+.variation-option:hover:not(.disabled) {
+    border-color: #333;
+}
+
+/* Selected State */
+.variation-option.selected {
+    border-color: #ffd700; /* Gold highlight */
+    background-color: #fff8e1; /* Light gold background */
+    color: #333;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* Disabled/Unavailable State */
+.variation-option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    border-color: #eee;
+}
+.variation-option.disabled:hover {
+    border-color: #eee; /* No border change on hover for disabled */
+}
+
+/* For Color Swatches */
+.variation-option.color {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    text-indent: -9999px; /* Hide the text content (color name) */
+}
+.variation-option.color.selected {
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px #ffd700; /* Outer ring for selection */
+}
+
+/* Media Query Adjustment for Mobile Alignment */
+@media (max-width: 900px) {
+    .variation-group {
+        justify-content: center; /* Center options when info column is centered */
+    }
+    .variation-group label {
+        min-width: auto;
+    }
+}
+
+/* --- NEW Styles for Quantity Selector (Task 3) --- */
+
+.quantity-selector-container {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.quantity-selector-container label {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.quantity-selector {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden; /* Contains the border neatly */
+}
+
+.quantity-selector input {
+    width: 60px;
+    text-align: center;
+    border: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 8px 0;
+    -moz-appearance: textfield; /* Hide default number input arrows in Firefox */
+}
+
+/* Hide default number input arrows in Chrome/Safari/Edge */
+.quantity-selector input::-webkit-outer-spin-button,
+.quantity-selector input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-btn {
+    background-color: #f5f5f5;
+    color: #333;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    outline: none;
+}
+
+.quantity-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Ensure centering on smaller screens */
+@media (max-width: 900px) {
+    .quantity-selector-container {
+        justify-content: center;
+    }
+}
+
+/* --- NEW Style for Add to Cart Success Feedback (Task 5) --- */
+
+.add-to-cart-detail.added-success {
+    background-color: #4CAF50; /* Green success color */
+    color: white;
+    transform: scale(1.02); /* Slight scale for animation feel */
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    transition: all 0.2s ease-out;
+}
+
+/* ======================================================= */
+/* 🚀 MOBILE/TOUCH OPTIMIZATION (Task 6) */
+/* ======================================================= */
+
+/* ------------------ A. General Layout for Small Screens ------------------ */
+
+/* Stack the product details vertically on mobile for better space utilization */
+@media (max-width: 768px) {
+    .detail-wrapper {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .detail-image-column, 
+    .detail-info-column {
+        width: 100%; /* Make both columns full width */
+        margin: 0;
+        padding: 0;
+    }
+    
+    .detail-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 400px; /* Cap image height on tall screens */
+        object-fit: contain;
+    }
+    
+    /* Ensure the main call to action button is full width */
+    .cta-button {
+        width: 100%; 
+        padding: 15px 20px;
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+}
+
+
+/* ------------------ B. Variation Control Optimization ------------------ */
+
+/* Ensure variation buttons are tappable (at least 48px tall) */
+.variation-option {
+    min-width: 45px;
+    min-height: 45px;
+    line-height: 45px; /* Centers text vertically */
+    font-size: 1em;
+}
+
+.variation-option.color {
+    /* Increase color swatch size for easy tapping */
+    width: 35px;
+    height: 35px;
+}
+
+/* ------------------ C. Quantity Selector Optimization ------------------ */
+
+/* Ensure plus/minus buttons are large and responsive */
+.quantity-btn {
+    padding: 12px 20px; /* Increase padding for better tap target */
+    font-size: 1.4em;
+    -webkit-tap-highlight-color: transparent; /* Remove default tap highlight */
+}
+
+.quantity-selector input {
+    width: 50px; /* Slightly reduce input width to save space */
+    padding: 12px 0;
+    font-size: 1.2em;
+}
+
+/* ------------------ D. Hover Effects for Touch Devices ------------------ */
+/* On devices that register 'hover', we often want to use ':active' instead. 
+   Using a media query to target devices that aren't primarily touch-based. */
+@media (hover: hover) and (pointer: fine) {
+    .quantity-btn:hover {
+        background-color: #e0e0e0;
+    }
+}
+/* For touch devices, the active state provides better feedback */
+.quantity-btn:active,
+.variation-option:active {
+    opacity: 0.8; /* Simple visual press effect */
+}
