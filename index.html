@@ -16,22 +16,25 @@
         <nav class="desktop-nav">
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="product.html">Produtcs</a></li>
+                <li><a href="product.html">Products</a></li> 
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
+
+        
 
         <div class="utilities">
             <form class="search-form">
                 <input type="search" placeholder="Search products...">
             </form>
             
-
-            <div class="cart-icon">
-                <i class="fa fa-shopping-cart"></i> 
-                <span class="notification-badge">0</span>
-            </div>
+            <a href="cart.html" class="cart-icon-link">
+                <div class="cart-icon">
+                    <i class="fa fa-shopping-cart"></i> 
+                    <span class="notification-badge">0</span>
+                </div>
+            </a>
             
             <button class="hamburger-menu">
                 &#9776
@@ -45,15 +48,21 @@
             <div class="hero-content">
                 <h1>Biggest Sale of the Year!</h1>
                 <p class="subheading">Exclusive deals on all new arrivals. Shop smart, live better.</p>
-                <a href="product.html" class="cta-button">Shop Now</a>
+                <a href="#prod" class="cta-button">Shop Now</a>
             </div>
-        </section>    
+        </section>
 
         <section class="products-container">
-            <h2 class="section-title">Featured Products</h2>
-            <div class="product-grid">
-        
+            <h2 class="section-title" id="prod">Featured Products</h2>
+            
+            <div class="filter-controls">
+                <label for="category-filter">Filter Products:</label>
+                <select id="category-filter">
+                    <option value="all">Loading Categories...</option> 
+                </select>
             </div>
+            <div class="product-grid">
+                </div>
         </section>
 
     </main>
@@ -67,5 +76,4 @@
 
     <script src="scripts/app.js"></script>
 </body>
-</html> 
-
+</html>

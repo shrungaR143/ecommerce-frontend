@@ -698,7 +698,7 @@ ul {
     font-size: 1.1em;
     font-weight: bold;
     padding: 8px 0;
-    -moz-appearance: textfield; /* Hide default number input arrows in Firefox */
+
 }
 
 /* Hide default number input arrows in Chrome/Safari/Edge */
@@ -820,4 +820,371 @@ ul {
 .quantity-btn:active,
 .variation-option:active {
     opacity: 0.8; /* Simple visual press effect */
+}
+
+
+/* ======================================================= */
+/* CART PAGE STYLES (Task 8A) */
+/* ======================================================= */
+
+.cart-content-wrapper {
+    display: flex;
+    gap: 30px;
+    padding: 20px 0;
+    flex-wrap: wrap; /* Allows stacking on mobile */
+}
+
+.cart-items-section {
+    flex: 2; /* Takes up more space */
+}
+
+.cart-summary-section {
+    flex: 1; /* Takes up less space */
+    min-width: 300px;
+    background-color: #f8f8f8;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#cart-totals p, #cart-totals h3 {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+#checkout-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+/* Mobile Layout for Cart Page */
+@media (max-width: 768px) {
+    .cart-items-section, .cart-summary-section {
+        flex: 100%; /* Full width stacking */
+        min-width: auto;
+    }
+}
+
+
+/* ======================================================= */
+/* CART ITEM LIST STYLES (Task 8B) */
+/* ======================================================= */
+
+.cart-items-list {
+    margin-top: 20px;
+}
+
+.cart-item {
+    display: grid;
+    /* Defines columns: Image | Details | Controls | Line Total */
+    grid-template-columns: 100px 1fr 180px 120px; 
+    gap: 20px;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-image {
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.cart-item-details {
+    /* Title, Price, Variations */
+}
+
+.cart-item-title {
+    font-size: 1.1em;
+    margin: 0 0 5px 0;
+}
+
+.cart-item-variations {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0;
+}
+
+.cart-item-total {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: right;
+    color: #333;
+}
+
+.cart-item-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-quantity-selector {
+    /* Reuses quantity-selector from main CSS but ensures it's centered */
+}
+
+.remove-item-btn {
+    background-color: transparent;
+    border: none;
+    color: #e53935; /* Red color */
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.remove-item-btn:hover {
+    color: #c62828;
+}
+
+/* --- Mobile Responsiveness for Cart Items --- */
+@media (max-width: 650px) {
+    .cart-item {
+        /* Stack everything into two main rows for better vertical layout */
+        grid-template-columns: 100px 1fr;
+        grid-template-areas: 
+            "image details"
+            "controls total";
+        padding: 15px 0;
+    }
+
+    .cart-item-controls {
+        grid-area: controls;
+        flex-direction: row; /* Controls side-by-side on bottom */
+        justify-content: space-around;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+    
+    .cart-item-details {
+        grid-area: details;
+    }
+
+    .cart-item-total {
+        grid-area: total;
+        text-align: center;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+}
+
+
+
+
+/* --- Filter Control Styling --- */
+.filter-controls {
+    display: flex; /* Aligns label and select horizontally */
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px; /* Spacing below the filter and above the products */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.filter-controls label {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333; /* Dark color for visibility */
+}
+
+#category-filter {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: white;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#category-filter:hover {
+    border-color: #ffd700; /* Highlight color */
+}
+
+#category-filter:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* --- Responsive Adjustments for Filter --- */
+@media (max-width: 600px) {
+    .filter-controls {
+        flex-direction: column; /* Stacks filter controls vertically */
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+
+/* --- Checkout Success Message Styling (Task 9) --- */
+.checkout-success-message {
+    text-align: center;
+    padding: 60px 20px;
+    margin: 40px auto;
+    border: 2px solid #4CAF50; /* Green border for success */
+    border-radius: 12px;
+    background-color: #f0fff0; /* Light green background */
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-success-message h2 {
+    color: #388e3c; /* Darker green heading */
+    margin-bottom: 15px;
+}
+
+.checkout-success-message p {
+    font-size: 1.1em;
+    margin-bottom: 25px;
+}
+
+.checkout-success-message a {
+    color: #1e88e5; /* Blue link color */
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+
+/* --- Product Detail Page: Variations (Size and Color) --- */
+.product-variations {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.variation-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.variation-option {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    margin-right: 10px;
+}
+
+/* Size options styling */
+.variation-option.size {
+    padding: 8px 15px;
+    min-width: 40px;
+}
+
+/* Color options styling (color circles) */
+.variation-option.color {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+    border: 2px solid #ccc;
+}
+
+.variation-option.color.selected {
+    border-color: #ffd700; /* Yellow ring for selection */
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
+}
+
+.variation-option.selected {
+    border-color: #333; /* Dark border for selected size */
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.variation-option.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* --- Quantity Selector Styling (Task 3) --- */
+.quantity-selector-container {
+    margin: 25px 0;
+}
+
+.quantity-selector-container label {
+    font-weight: 600;
+    margin-right: 15px;
+}
+
+.quantity-selector {
+    display: inline-flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.quantity-btn {
+    background-color: #f5f5f5;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.quantity-btn:hover {
+    background-color: #ddd;
+}
+
+#quantity {
+    width: 50px;
+    text-align: center;
+    border: none;
+    font-size: 1em;
+    padding: 10px 0;
+    background-color: white;
+}
+
+/* --- Price and Total Display (Task 5) --- */
+.detail-price-rating {
+    margin: 20px 0;
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+.detail-price {
+    color: #cc0000; /* Highlighted price */
+    margin-right: 30px;
+}
+
+
+/* --- Add to Cart Feedback --- */
+.cta-button.add-to-cart-detail {
+    /* Ensure the detail button looks like a CTA */
+    background-color: #333;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Success style used by product-detail.js */
+.cta-button.added-success {
+    background-color: #4CAF50; /* Green success color */
+    pointer-events: none; /* Prevent re-clicking while message is active */
 }

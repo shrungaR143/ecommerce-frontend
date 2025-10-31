@@ -9,58 +9,13 @@ const MAX_QUANTITY = 10;
 const MIN_QUANTITY = 1;
 
 // ==================================================================
-// 🚀 NEW FUNCTION: Task 5 - Cart Utility Functions
+// === STANDARD CART MANAGEMENT UTILITY FUNCTIONS ===
+// 🛑 REMOVED: getCartItems, saveCartItems, updateCartBadge
+//    (These are now assumed to be globally available from app.js)
 // ==================================================================
 
-/**
- * Retrieves the cart array from Local Storage, or returns an empty array.
- * @returns {Array} The cart items array.
- */
-function getCartItems() {
-    try {
-        const cart = localStorage.getItem('shoppingCart');
-        return cart ? JSON.parse(cart) : [];
-    } catch (e) {
-        console.error("Error retrieving cart from Local Storage:", e);
-        return [];
-    }
-}
-
-/**
- * Saves the cart array back to Local Storage.
- * @param {Array} items - The cart items array to save.
- */
-function saveCartItems(items) {
-    try {
-        localStorage.setItem('shoppingCart', JSON.stringify(items));
-    } catch (e) {
-        console.error("Error saving cart to Local Storage:", e);
-    }
-}
-
-/**
- * Updates the visual cart badge in the header.
- */
-function updateCartBadge() {
-    const cartItems = getCartItems();
-    // Calculate total count (sum of all item quantities)
-    const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-    const badge = document.querySelector('.notification-badge');
-    
-    if (badge) {
-        if (totalCount > 0) {
-            badge.textContent = totalCount;
-            badge.style.display = 'block';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-}
-
-
 // ==================================================================
-// Price & Variation Logic (Task 4)
+// Price & Variation Logic 
 // ==================================================================
 
 // --- MOCK DATA for Variations ---
@@ -157,7 +112,7 @@ function handleVariationSelection(type, value, element) {
 
 
 // ==================================================================
-// Quantity Selector Logic (Task 3 & 4)
+// Quantity Selector Logic 
 // ==================================================================
 
 /**
@@ -246,8 +201,11 @@ function renderProductDetail(product) {
                         Rating: ${product.rating.rate} (${product.rating.count} reviews)
                     </span>
                 </div>
-                <button class="cta-button add-to-cart-detail" data-product-id="${product.id}" data-product-title="${product.title}" data-product-price="${product.price}">
-                    Add to Cart
+                <button class="cta-button add-to-cart-detail" 
+                    data-product-id="${product.id}" 
+                    data-product-title="${product.title}" 
+                    data-product-price="${product.price}"
+                    data-product-image="${product.image}"> Add to Cart
                 </button>
             </div>
         </div>
@@ -257,7 +215,7 @@ function renderProductDetail(product) {
     
     renderVariations(); 
     initializeQuantitySelector();
-    // 🚀 NEW: Ensure cart badge is updated on page load
+    // 🚀 Ensure cart badge is updated on page load (via global function)
     updateCartBadge(); 
 }
 
@@ -293,12 +251,9 @@ async function fetchProductDetail() {
     }
 }
 
-// Start the process when the script loads
-fetchProductDetail();
-
 
 // ------------------------------------------------------------------
-// 🚀 NEW: Add to Cart Logic with Local Storage & Feedback (Task 5)
+// Add to Cart Logic with Local Storage & Feedback 
 // ------------------------------------------------------------------
 
 document.addEventListener('click', (e) => {
@@ -310,6 +265,8 @@ document.addEventListener('click', (e) => {
         const productId = parseInt(target.getAttribute('data-product-id'));
         const productTitle = target.getAttribute('data-product-title');
         const productPrice = parseFloat(target.getAttribute('data-product-price'));
+        const productImage = target.getAttribute('data-product-image'); 
+        
         const quantity = parseInt(document.getElementById('quantity').value);
 
         // 1. Create the item object with all state
@@ -318,13 +275,14 @@ document.addEventListener('click', (e) => {
             title: productTitle,
             price: productPrice,
             quantity: quantity,
+            image: productImage, 
             size: selectedSize,
             color: selectedColor,
             // Include a unique ID to identify this specific variation/quantity combination
             cartUniqueId: `${productId}-${selectedSize}-${selectedColor}`
         };
 
-        // 2. Load, Update, and Save to Local Storage
+        // 2. Load, Update, and Save to Local Storage (using global functions)
         const cartItems = getCartItems();
         const existingItemIndex = cartItems.findIndex(item => item.cartUniqueId === newItem.cartUniqueId);
 
@@ -341,7 +299,7 @@ document.addEventListener('click', (e) => {
         // 3. Visual Feedback (Success Message/Animation)
         const originalText = target.textContent;
         target.textContent = 'ADDED!';
-        target.classList.add('added-success'); // Use this for CSS animation/color
+        target.classList.add('added-success'); 
         
         // 4. Update Cart Count Badge
         updateCartBadge();
@@ -354,3 +312,10 @@ document.addEventListener('click', (e) => {
         }, 1000); 
     }
 });
+
+// ------------------------------------------------------------------
+// Initialization 
+// ------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', fetchProductDetail);
+
+

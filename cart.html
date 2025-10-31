@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <nav class="desktop-nav">
+            <a href="index.html" class="logo">E-Commerce</a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li class="cart-link-wrapper">
+                    <a href="cart.html" class="nav-cart-link">
+                        🛒 Cart
+                        <span class="notification-badge">0</span> 
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Your Shopping Cart</h1>
+        
+        <div class="cart-content-wrapper">
+            
+            <section class="cart-items-section">
+                <h2>Items in Cart</h2>
+                <div id="cart-items-container" class="cart-items-list">
+                    <p id="empty-cart-message">Your cart is currently empty. Start shopping!</p>
+                </div>
+            </section>
+
+            <aside class="cart-summary-section">
+                <h2>Order Summary</h2>
+                <div id="cart-totals">
+                    <p>Subtotal: <span id="cart-subtotal">$0.00</span></p>
+                    <p>Shipping: <span id="cart-shipping">$5.00</span></p>
+                    <hr>
+                    <h3>Total: <span id="cart-total">$5.00</span></h3>
+                </div>
+                <button id="checkout-btn" class="cta-button">Proceed to Checkout</button>
+            </aside>
+
+        </div>
+    </main>
+    
+    <script src="scripts/app.js"></script>
+    <script src="scripts/cart.js"></script> 
+</body>
+</html>

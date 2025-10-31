@@ -1,179 +1,308 @@
 console.log("E-Commerce Website Loaded");
 
 // --- CACHING AND CART SETUP ---
-// Variables for Product Caching (Task 6: Optimization)
 const CACHE_KEY = 'cachedProducts';
 const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 
-// FIX: CLEAR THE CART ON PAGE LOAD (Task 6: Persistence Fix)
-// This ensures the cart badge starts at 0 when the page is closed and reopened.
-localStorage.removeItem('cart');
+// 💡 Standardized key for persistent cart data
+const CART_STORAGE_KEY = 'shoppingCart'; 
 
 // 1. Select the necessary elements from the HTML
 const hamburgerBtn = document.querySelector('.hamburger-menu');
 const desktopNav = document.querySelector('.desktop-nav'); 
 const productGrid = document.querySelector('.product-grid');
-const cartBadge = document.querySelector('.notification-badge'); // Select the badge element
+const cartBadge = document.querySelector('.notification-badge');
+
+// 🚀 TASK 4 ELEMENT: Selector for the category filter dropdown
+const categoryFilter = document.getElementById('category-filter');
 
 
-// === CART MANAGEMENT FUNCTIONS ===
+// ==================================================================
+// === STANDARD CART MANAGEMENT FUNCTIONS (Used by ALL Pages) ===
+// ==================================================================
 
-// Function to get the current cart array from browser storage
+/**
+ * Retrieves the persistent cart array from Local Storage (shoppingCart key).
+ * @returns {Array} The cart items array.
+ */
 function getCartItems() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    return cart;
-}
-
-// Function to update the visual badge count
-function updateCartBadge() {
-    const cart = getCartItems();
-    const count = cart.length;
-    
-    if (cartBadge) { 
-        cartBadge.textContent = count; 
-        // Badge display handled by CSS for initial state, but JavaScript ensures dynamic showing/hiding
-        cartBadge.style.display = count > 0 ? 'block' : 'none';
+    try {
+        const cart = localStorage.getItem(CART_STORAGE_KEY);
+        return cart ? JSON.parse(cart) : [];
+    } catch (e) {
+        console.error("Error retrieving cart from Local Storage:", e);
+        return [];
     }
 }
 
-// Function to add a product to the cart storage and update the count
+/**
+ * Saves the cart array back to Local Storage.
+ * @param {Array} items - The cart items array to save.
+ */
+function saveCartItems(items) {
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {
+        console.error("Error saving cart to Local Storage:", e);
+    }
+}
+
+/**
+ * Updates the visual badge count based on the SUM of all item quantities.
+ */
+function updateCartBadge() {
+    const cartItems = getCartItems();
+    // Calculate total count (sum of all item quantities stored in Local Storage)
+    const totalCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    
+    if (cartBadge) { 
+        cartBadge.textContent = totalCount; 
+        // CRITICAL: Badge starts from 0. If 0, display is 'none'.
+        cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
+    }
+}
+
+/**
+ * Function to add a product to the cart storage and update the count.
+ * 🚀 Handles Quantity Update for existing items.
+ */
 function addToCart(productId) {
     let cart = getCartItems();
     
-    cart.push({ id: productId, quantity: 1 });
+    const newItem = { 
+        id: parseInt(productId), 
+        quantity: 1,
+        cartUniqueId: `${productId}-default-default` 
+    };
+
+    const existingItemIndex = cart.findIndex(item => item.cartUniqueId === newItem.cartUniqueId);
+
+    if (existingItemIndex > -1) {
+        // Update quantity
+        cart[existingItemIndex].quantity += 1;
+    } else {
+        // Add the new item
+        cart.push(newItem);
+    }
     
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
+    saveCartItems(cart);
     updateCartBadge();
     
-    console.log(`Product ID ${productId} successfully added. Current count: ${cart.length}`);
+    console.log(`Product ID ${productId} successfully added/updated.`);
 }
 
-// Initialize the badge count when the page loads
-updateCartBadge(); 
+// ==================================================================
+// === TASK 4: PRODUCT FILTERING LOGIC ===
+// ==================================================================
 
-
-// === MOBILE NAVIGATION LOGIC ===
-hamburgerBtn.addEventListener('click', () => {
-    desktopNav.classList.toggle('active');
-    
-    if (desktopNav.classList.contains('active')) {
-        hamburgerBtn.innerHTML = '&#10005;'; 
-    } else {
-        hamburgerBtn.innerHTML = '&#9776;'; 
+/**
+ * Renders the categories into the filter dropdown menu.
+ * @param {Array<string>} categories - A unique list of all categories.
+ */
+function renderCategoryFilter(categories) {
+    if (!categoryFilter) {
+        console.warn("Category filter element (#category-filter) not found.");
+        return;
     }
-});
+
+    // Start with the default 'All Products' option
+    let optionsHTML = '<option value="all">All Products</option>';
+
+    // Add an option for each unique category
+    categories.forEach(category => {
+        // Optional: Capitalize for better display
+        const formattedCategory = category.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        
+        optionsHTML += `<option value="${category}">${formattedCategory}</option>`;
+    });
+
+    categoryFilter.innerHTML = optionsHTML;
+    
+    // Set up the listener immediately after rendering
+    categoryFilter.addEventListener('change', handleFilterChange);
+}
 
 
-// --- HELPER FUNCTION TO RENDER PRODUCTS ---
-// This function takes the product data and injects it into the HTML
+/**
+ * Handles the change event from the category filter dropdown.
+ */
+function handleFilterChange(e) {
+    const selectedCategory = e.target.value;
+    filterAndRenderProducts(selectedCategory);
+}
+
+
+/**
+ * Filters the products based on the selected category and re-renders the grid.
+ */
+function filterAndRenderProducts(category) {
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    if (!cachedData) return; // Cannot filter if no data is cached
+
+    const { products } = JSON.parse(cachedData);
+    let filteredProducts = products;
+
+    if (category !== 'all') {
+        filteredProducts = products.filter(product => product.category === category);
+    }
+    
+    renderProducts(filteredProducts);
+}
+
+
+// ==================================================================
+// === FETCHING AND RENDERING ===
+// ==================================================================
+
 // --- HELPER FUNCTION TO RENDER PRODUCTS ---
 function renderProducts(products) {
     productGrid.innerHTML = ''; // Clear loading message
 
+    if (products.length === 0) {
+        productGrid.innerHTML = '<p style="text-align: center; font-size: 1.2em; grid-column: 1 / -1;">No products found in this category.</p>';
+        return;
+    }
+
     products.forEach(product => {
         const formattedPrice = product.price.toFixed(2);
         
+        // Corrected link structure to use product-card-link-wrapper if needed for CSS
         const productCardHTML = `
-            <a href="product.html?id=${product.id}" class="product-card">
-                <div class="product-image-wrapper">
-                    <img 
-                        src="${product.image}" 
-                        alt="${product.title}" 
-                        class="product-image"
-                        loading="lazy" 
-                    >
+            <a href="product.html?id=${product.id}" class="product-card-link-wrapper"> 
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img 
+                            src="${product.image}" 
+                            alt="${product.title}" 
+                            class="product-image"
+                            loading="lazy" 
+                        >
+                    </div>
+                    
+                    <h3 class="product-title" title="${product.title}">${product.title}</h3>
+                    
+                    <p class="product-price">$${formattedPrice}</p>
+                    
+                    <button class="add-to-cart-btn" data-product-id="${product.id}">
+                        Add to Cart
+                    </button>
                 </div>
-                
-                <h3 class="product-title" title="${product.title}">${product.title}</h3>
-                
-                <p class="product-price">$${formattedPrice}</p>
-                
-                <button class="add-to-cart-btn" data-product-id="${product.id}">
-                    Add to Cart
-                </button>
             </a>
             `;
-        // --- MODIFICATION ENDS HERE ---
-        
+            
         productGrid.insertAdjacentHTML('beforeend', productCardHTML);
     });
-    
 }
 
-// --- FUNCTION TO FETCH PRODUCTS (WITH CACHING LOGIC) ---
+// --- FUNCTION TO FETCH PRODUCTS (UPDATED to fetch ALL for filtering) ---
 async function fetchProducts() {
+    // Only run this on the index page where productGrid exists
+    if (!productGrid) return; 
+
     productGrid.innerHTML = '<p style="text-align: center; font-size: 1.2em;">Loading products...</p>';
     
-    // === Caching Check (Task 6) ===
     const cachedData = localStorage.getItem(CACHE_KEY);
-    
+    let products = [];
+    let isCached = false;
+
+    // Check Cache
     if (cachedData) {
-        const { timestamp, products } = JSON.parse(cachedData);
+        const parsedData = JSON.parse(cachedData);
         const currentTime = new Date().getTime();
 
-        // Check if cache is still valid (less than 1 hour old)
-        if (currentTime - timestamp < CACHE_DURATION) {
+        if (currentTime - parsedData.timestamp < CACHE_DURATION) {
+            products = parsedData.products;
+            isCached = true;
             console.log('Serving products from cache. API call avoided.');
-            renderProducts(products);
-            return; // Exit the function, no API call needed
         } else {
-            console.log('Cache expired. Fetching new data...');
-            localStorage.removeItem(CACHE_KEY); // Clear old cache
+            localStorage.removeItem(CACHE_KEY); 
         }
     }
-    // === End Caching Check ===
 
-    try {
-        // Fetch API Data
-        const response = await fetch('https://fakestoreapi.com/products?limit=8'); 
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // Fetch if not cached or cache expired
+    if (!isCached) {
+        try {
+            // Fetch ALL products to get a complete category list
+            const response = await fetch('https://fakestoreapi.com/products'); 
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            products = await response.json();
+
+            // Cache the full data
+            const dataToCache = {
+                timestamp: new Date().getTime(),
+                products: products
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(dataToCache));
+
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            productGrid.innerHTML = '<p style="color: red; text-align: center; font-size: 1.2em;">Failed to load products. Check console for error details.</p>';
+            return;
         }
-        
-        const products = await response.json();
-
-        // === Cache Storage (Task 6) ===
-        const dataToCache = {
-            timestamp: new Date().getTime(),
-            products: products
-        };
-        localStorage.setItem(CACHE_KEY, JSON.stringify(dataToCache));
-        // === End Cache Storage ===
-
-        renderProducts(products);
-
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        productGrid.innerHTML = '<p style="color: red; text-align: center; font-size: 1.2em;">Failed to load products. Check console for error details.</p>';
     }
+    
+    // --- TASK 4: Initialize Filtering ---
+    const uniqueCategories = [...new Set(products.map(p => p.category))];
+    renderCategoryFilter(uniqueCategories);
+    
+    // Render all products initially
+    renderProducts(products);
 }
 
-// Execute the product fetch function
-fetchProducts();
+
+// ------------------------------------------------------------------
+// Initialization
+// ------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 🚀 CRITICAL FIX: Ensure the badge is initialized first thing on any page load!
+    // This call reads localStorage and sets the badge count (even if it's 0).
+    updateCartBadge(); 
 
 
-// === FINAL ADD TO CART CLICK LISTENER ===
-document.addEventListener('click', (e) => {
-    
-    if (e.target.classList.contains('add-to-cart-btn')) {
-        
-        e.preventDefault(); 
-        const productId = e.target.getAttribute('data-product-id');
-        
-        // 1. Call the function that updates storage and the badge
-        addToCart(productId);
-        
-        // 2. Visual Feedback
-        const originalText = e.target.textContent;
-        e.target.textContent = 'ADDED!';
-        e.target.style.backgroundColor = '#4CAF50'; 
-        
-        setTimeout(() => {
-            e.target.textContent = originalText;
-            e.target.style.backgroundColor = '#ffd700'; 
-        }, 1000); 
+    // === MOBILE NAVIGATION LOGIC ===
+    if(hamburgerBtn && desktopNav) {
+        hamburgerBtn.addEventListener('click', () => {
+            desktopNav.classList.toggle('active');
+            
+            if (desktopNav.classList.contains('active')) {
+                hamburgerBtn.innerHTML = '&#10005;'; 
+            } else {
+                hamburgerBtn.innerHTML = '&#9776;'; 
+            }
+        });
     }
-});
 
+    // Execute the product fetch function (only runs logic if productGrid is on the page)
+    fetchProducts();
+
+
+    // === FINAL ADD TO CART CLICK LISTENER ===
+    document.addEventListener('click', (e) => {
+        
+        if (e.target.classList.contains('add-to-cart-btn')) {
+            
+            e.preventDefault(); 
+            const productId = e.target.getAttribute('data-product-id');
+            
+            // 1. Call the function that updates storage and the badge
+            addToCart(productId);
+            
+            // 2. Visual Feedback
+            const originalText = e.target.textContent;
+            e.target.textContent = 'ADDED!';
+            e.target.style.backgroundColor = '#4CAF50'; 
+            
+            setTimeout(() => {
+                e.target.textContent = originalText;
+                e.target.style.backgroundColor = '#ffd700'; 
+            }, 1000); 
+        }
+    });
+});
