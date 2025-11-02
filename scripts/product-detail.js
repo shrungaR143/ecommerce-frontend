@@ -1,3 +1,6 @@
+
+import { getCartItems, saveCartItems, updateCartBadge } from "./app.js";
+
 // Select the container where product details will be displayed
 const productDetailsContainer = document.querySelector('#product-details');
 

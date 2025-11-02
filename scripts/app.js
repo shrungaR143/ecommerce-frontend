@@ -1,5 +1,11 @@
 console.log("E-Commerce Website Loaded");
 
+// 1. NEW IMPORTS: Import necessary Firebase services and functions
+// Ensure you have an 'auth' export in your firebase-config.js file
+import { auth } from "./firebase-config.js"; 
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+
 // --- CACHING AND CART SETUP ---
 const CACHE_KEY = 'cachedProducts';
 const CACHE_DURATION = 3600000; // 1 hour in milliseconds
@@ -13,19 +19,23 @@ const desktopNav = document.querySelector('.desktop-nav');
 const productGrid = document.querySelector('.product-grid');
 const cartBadge = document.querySelector('.notification-badge');
 
+// 🚀 TASK 5 ELEMENT: Selector for the Authentication links container
+const authLinksContainer = document.getElementById('auth-links');
+
 // 🚀 TASK 4 ELEMENT: Selector for the category filter dropdown
 const categoryFilter = document.getElementById('category-filter');
 
 
 // ==================================================================
 // === STANDARD CART MANAGEMENT FUNCTIONS (Used by ALL Pages) ===
+// === CRITICAL FIX: ADDED 'EXPORT' KEYWORD ===
 // ==================================================================
 
 /**
  * Retrieves the persistent cart array from Local Storage (shoppingCart key).
  * @returns {Array} The cart items array.
  */
-function getCartItems() {
+export function getCartItems() { // <-- ADDED EXPORT
     try {
         const cart = localStorage.getItem(CART_STORAGE_KEY);
         return cart ? JSON.parse(cart) : [];
@@ -39,7 +49,7 @@ function getCartItems() {
  * Saves the cart array back to Local Storage.
  * @param {Array} items - The cart items array to save.
  */
-function saveCartItems(items) {
+export function saveCartItems(items) { // <-- ADDED EXPORT
     try {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch (e) {
@@ -50,7 +60,7 @@ function saveCartItems(items) {
 /**
  * Updates the visual badge count based on the SUM of all item quantities.
  */
-function updateCartBadge() {
+export function updateCartBadge() { // <-- ADDED EXPORT
     const cartItems = getCartItems();
     // Calculate total count (sum of all item quantities stored in Local Storage)
     const totalCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -66,7 +76,7 @@ function updateCartBadge() {
  * Function to add a product to the cart storage and update the count.
  * 🚀 Handles Quantity Update for existing items.
  */
-function addToCart(productId) {
+export function addToCart(productId) { // <-- ADDED EXPORT
     let cart = getCartItems();
     
     const newItem = { 
@@ -256,14 +266,92 @@ async function fetchProducts() {
 }
 
 
+// ==================================================================
+// === TASK 5: FIREBASE AUTHENTICATION STATE LOGIC (NEW) ===
+// ==================================================================
+
+/**
+ * Handles the Firebase Logout process.
+ */
+const handleLogout = async () => {
+    try {
+        await signOut(auth);
+        // The onAuthStateChanged listener handles the UI change and redirection.
+    } catch (error) {
+        console.error("Logout Error:", error);
+        alert("Logout failed. Please try again.");
+    }
+};
+
+/**
+ * Listens for user state changes and updates the global UI.
+ */
+function setupAuthStateListener() {
+    if (!authLinksContainer) return;
+
+    onAuthStateChanged(auth, (user) => {
+        const currentPage = window.location.pathname;
+
+        if (user) {
+            // 🔑 User is signed in.
+            
+            // Update UI: Show user info and Logout link
+            authLinksContainer.innerHTML = `
+                <li><span class="nav-user">Hello, ${user.email}</span></li>
+                <li><a href="#" id="logout-btn" class="nav-link cta-button">Logout</a></li>
+            `;
+            
+            // Attach Logout Event
+            document.getElementById('logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                handleLogout();
+            });
+
+            // Redirect protection: If user is on Login/Signup page, send them home
+            if (currentPage.includes('login.html') || currentPage.includes('signup.html')) {
+                window.location.href = 'index.html';
+            }
+
+        } else {
+            // 🔓 User is signed out.
+            
+            // Update UI: Show Login and Signup links
+            authLinksContainer.innerHTML = `
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="signup.html" class="nav-link cta-button">Sign Up</a></li>
+            `;
+            
+            // Redirect logic for logged-out users:
+            
+            // 1. Check for Restricted Pages (e.g., cart, profile)
+            const restrictedPages = ['cart.html', 'profile.html']; // Add your restricted pages here
+            const isOnRestrictedPage = restrictedPages.some(page => currentPage.includes(page));
+
+            if (isOnRestrictedPage) {
+                 window.location.href = 'login.html';
+                 return; // Stop further execution/redirect checks
+            }
+
+            // 2. NEW LOGIC: Force Redirect from Index/Homepage to Login Page
+            // Checks for 'index.html' or the root path '/'
+            if (currentPage.includes('index.html') || currentPage === '/') {
+                window.location.href = 'login.html';
+            }
+        }
+    });
+}
+
+
 // ------------------------------------------------------------------
 // Initialization
 // ------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
 
     // 🚀 CRITICAL FIX: Ensure the badge is initialized first thing on any page load!
-    // This call reads localStorage and sets the badge count (even if it's 0).
     updateCartBadge(); 
+
+    // 🚀 NEW: Initialize the Firebase Auth Listener
+    setupAuthStateListener(); 
 
 
     // === MOBILE NAVIGATION LOGIC ===
